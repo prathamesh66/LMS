@@ -112,7 +112,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { FaPlayCircle } from "react-icons/fa";
@@ -126,13 +126,29 @@ function ViewLecture() {
 
   const navigate = useNavigate();
 
+  const BACKEND_URL = "https://lms-wmy8.onrender.com";
+
   const selectedCourse = courseData?.find(
     (course) => course._id === courseId
   );
 
-  const [selectedLecture, setSelectedLecture] = useState(
-    selectedCourse?.lectures?.[0] || null
-  );
+  const [selectedLecture, setSelectedLecture] = useState(null);
+
+  // Set first lecture when course data is available
+  useEffect(() => {
+    if (selectedCourse?.lectures?.length > 0) {
+      setSelectedLecture(selectedCourse.lectures[0]);
+    }
+  }, [selectedCourse]);
+
+  // Convert localhost video URL to Render URL
+  const getVideoUrl = (url) => {
+    if (!url) return "";
+
+    return url
+      .replace("http://localhost:8000", BACKEND_URL)
+      .replace("https://localhost:8000", BACKEND_URL);
+  };
 
   const courseCreator =
     userData?._id === selectedCourse?.creator
@@ -143,6 +159,8 @@ function ViewLecture() {
   const handleLectureSelect = (lecture) => {
     setSelectedLecture(lecture);
   };
+
+  const videoUrl = getVideoUrl(selectedLecture?.videoUrl);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex flex-col md:flex-row gap-6">
@@ -178,14 +196,17 @@ function ViewLecture() {
         {/* ================= VIDEO PLAYER ================= */}
         <div className="aspect-video bg-black rounded-xl overflow-hidden mb-4 border border-gray-300">
 
-          {selectedLecture?.videoUrl ? (
+          {videoUrl ? (
 
             <video
-              key={selectedLecture.videoUrl}
-              src={selectedLecture.videoUrl}
+              key={videoUrl}
+              src={videoUrl}
               controls
               preload="metadata"
               className="w-full h-full object-contain"
+              onError={(e) => {
+                console.error("Video failed to load:", videoUrl);
+              }}
             >
               Your browser does not support the video tag.
             </video>
@@ -302,3 +323,4 @@ function ViewLecture() {
 }
 
 export default ViewLecture;
+
