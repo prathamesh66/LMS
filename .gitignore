@@ -73,3 +73,8 @@ coverage/
 # Testing
 # =========================
 .nyc_output/
+
+# =========================
+# Uploaded Course Videos
+# =========================
+backend/public/uploads/*.mp4
