@@ -101,14 +101,10 @@ export const getCreatorCourses = async (req, res) => {
       creator: userId,
     });
 
-    if (!courses || courses.length === 0) {
-      return res.status(404).json({
-        message: "Course not found",
-      });
-    }
-
     return res.status(200).json(courses);
   } catch (error) {
+    console.error("GET CREATOR COURSES ERROR:", error);
+
     return res.status(500).json({
       message: `Failed to get creator courses ${error}`,
     });
