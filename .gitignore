@@ -73,8 +73,3 @@ coverage/
 # Testing
 # =========================
 .nyc_output/
-
-# =========================
-# Optional: uploaded files
-# =========================
-uploads/
